@@ -104,6 +104,7 @@ To build and run this application we'll be using Docker and Docker Compose, you 
 After setting up these prerequisites, you will be ready to build and run the application using Docker Compose commands.
 
 TL;DR:
+
 0. Make sure you have set up correctly your .env file
 1. Type `docker-compose up --build -V` to completely set up our Dockerized Environment;
 2. Once our Docker container is up and running check the container's logs and look for a line like this:
