@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hubspot-integration-api-app
+    restart: unless-stopped
+    environment:
+      - HUBSPOT_REDIRECT_URI=${HUBSPOT_REDIRECT_URI}
+      - HUBSPOT_CLIENT_ID=${HUBSPOT_CLIENT_ID}
+      - HUBSPOT_CLIENT_SECRET=${HUBSPOT_CLIENT_SECRET}
+      - SPRING_APPLICATION_NAME=hubspot-integration-api
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:hubspot_db;DB_CLOSE_DELAY=-1
+      - SPRING_DATASOURCE_DRIVERCLASSNAME=org.h2.Driver
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_H2_CONSOLE_ENABLED=true
+      - SPRING_H2_CONSOLE_PATH=/h2-console
+      - SERVER_PORT=8080
+      - SPRING_SECURITY_USER_NAME=${APP_USER:-hubspot}
+      - SPRING_SECURITY_USER_PASSWORD=${APP_PASSWORD:-hubspot}
+    networks:
+      - hubspot-net
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: ngrok-tunnel
+    restart: unless-stopped
+    depends_on:
+      - app
+    networks:
+      - hubspot-net
+    ports:
+      - "4040:4040"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    command: http app:8080
+
+networks:
+  hubspot-net:
+    driver: bridge
